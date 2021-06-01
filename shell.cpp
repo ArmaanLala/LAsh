@@ -14,7 +14,7 @@ char **parse_input(char *input, int* index, char * separator = " ") {
         returnArr[*index] = parsed;
         (*index)++;
         parsed = strtok(NULL, separator);
-        cout << *index << endl;
+        // cout << *index << endl;
     }
 
     returnArr[*index] = NULL;
@@ -53,9 +53,9 @@ void execute(char** split) {
         wait(&status);      // Blocking Wait
         if(WIFEXITED(status)) {
             // Debug statements
-            cout << "Job Exited with status " << WEXITSTATUS(status) << endl;
+            // cout << "Job Exited with status " << WEXITSTATUS(status) << endl;
         } else if (WIFSIGNALED(status) ) {
-            cout << "Child was signaled, sig = " << WTERMSIG(status) << endl;
+            // cout << "Child was signaled, sig = " << WTERMSIG(status) << endl;
         }
     }
 }
@@ -75,12 +75,14 @@ int main() {
         
         int separateCmd = 0;
 
-        
-    
-        int length = 0;
-        split = parse_input(conversion,&length);
+        char** seperateCommands = parse_input(conversion,&separateCmd, ";");
 
-        execute(split);
+        for (int i = 0; i < separateCmd; i++) {
+            int length = 0;
+            split = parse_input(seperateCommands[i],&length);
+
+            execute(split);
+        }
         // cout << "length: " << length << endl;
         // cd is not a shell function and when we cd in the child
         // this does not change the parent processes location so we must do something else
