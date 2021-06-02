@@ -27,7 +27,6 @@ int main()
     return 0;
 }
 
-
 int execute(char *input)
 {
 
@@ -45,6 +44,12 @@ int execute(char *input)
     {
         chdir(split[1]);
         return 0;
+    }
+
+    if (strcmp("exec", split[0]) == 0)
+    {
+        int val = execvp(split[1], split);
+        return val;
     }
 
     if ((pid = fork()) < 0)
@@ -144,7 +149,6 @@ void handleLogic(char *input)
     }
     skip = false;
 }
-
 
 char **parse_input(char *input, int *index, char *separator)
 {
