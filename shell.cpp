@@ -34,21 +34,22 @@ string subshell(string input)
     // Handle Subshell Parsing
     if (input.find("(") != -1)
     {
+        string exec;
         string temp = input.substr(input.find('(') + 1);
         temp = temp.substr(0, temp.find(')'));
-        subshell(temp);
+        exec = temp;
         temp = input.substr(0, input.find('('));
         input = input.substr(input.find(')') + 1);
         input = temp + input;
-    }
+    
 
     // cout << "SUBSHELL" << endl;
     int pid;
     int status;
     if ((pid = fork()) == 0)
     {
-        char *conversion = (char *)malloc(input.length() + 1);
-        strcpy(conversion, input.c_str());
+        char *conversion = (char *)malloc(exec.length() + 1);
+        strcpy(conversion, exec.c_str());
 
         int separateCmd = 0;
         char **seperateCommands = parse_input(conversion, &separateCmd, ";");
@@ -63,11 +64,20 @@ string subshell(string input)
     {
         wait(&status); // Blocking Wait
     }
+    }
     return input;
 }
 
 int execute(char *input)
 {
+    string parse = input; 
+
+    bool negate = false;
+    if (parse.find('!') != -1) {
+        negate = true;
+        parse = parse.substr(parse.find('!') + 1);
+        strcpy(input, parse.c_str());
+    }
 
     char **split;
     int length = 0;
@@ -76,6 +86,8 @@ int execute(char *input)
     int pid;
     int status;
     int error = 1;
+
+    
 
     // cd is not a shell function and when we cd in the child
     // this does not change the parent processes location so we must do something else
@@ -115,6 +127,13 @@ int execute(char *input)
         else if (WIFSIGNALED(status))
         {
             // cout << "Child was signaled, sig = " << WTERMSIG(status) << endl;
+        }
+        if (negate) {
+            if (status == 0) {
+                return (1);
+            } else {
+                return (0);
+            }
         }
         return (status);
     }
