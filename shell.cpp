@@ -10,11 +10,12 @@ int main()
     {
         cout << "$ ";
         getline(cin, input);
-        while(input.back() == '\\') {
-            
+        while (input.back() == '\\')
+        {
+
             string newline;
             cout << "> ";
-            getline(cin,newline);
+            getline(cin, newline);
             input.pop_back();
             // cout << input << endl;
             input = input + newline;
@@ -51,39 +52,39 @@ string subshell(string input)
         temp = input.substr(0, input.find('('));
         input = input.substr(input.find(')') + 1);
         input = temp + input;
-    
 
-    // cout << "SUBSHELL" << endl;
-    int pid;
-    int status;
-    if ((pid = fork()) == 0)
-    {
-        char *conversion = (char *)malloc(exec.length() + 1);
-        strcpy(conversion, exec.c_str());
-
-        int separateCmd = 0;
-        char **seperateCommands = parse_input(conversion, &separateCmd, ";");
-
-        for (int i = 0; i < separateCmd; i++)
+        // cout << "SUBSHELL" << endl;
+        int pid;
+        int status;
+        if ((pid = fork()) == 0)
         {
-            handleLogic(seperateCommands[i]);
+            char *conversion = (char *)malloc(exec.length() + 1);
+            strcpy(conversion, exec.c_str());
+
+            int separateCmd = 0;
+            char **seperateCommands = parse_input(conversion, &separateCmd, ";");
+
+            for (int i = 0; i < separateCmd; i++)
+            {
+                handleLogic(seperateCommands[i]);
+            }
+            exit(0);
         }
-        exit(0);
-    }
-    else
-    {
-        wait(&status); // Blocking Wait
-    }
+        else
+        {
+            wait(&status); // Blocking Wait
+        }
     }
     return input;
 }
 
 int execute(char *input)
 {
-    string parse = input; 
+    string parse = input;
 
     bool negate = false;
-    if (parse.find('!') != -1) {
+    if (parse.find('!') != -1)
+    {
         negate = true;
         parse = parse.substr(parse.find('!') + 1);
         strcpy(input, parse.c_str());
@@ -96,8 +97,6 @@ int execute(char *input)
     int pid;
     int status;
     int error = 1;
-
-    
 
     // cd is not a shell function and when we cd in the child
     // this does not change the parent processes location so we must do something else
@@ -138,10 +137,14 @@ int execute(char *input)
         {
             // cout << "Child was signaled, sig = " << WTERMSIG(status) << endl;
         }
-        if (negate) {
-            if (status == 0) {
+        if (negate)
+        {
+            if (status == 0)
+            {
                 return (1);
-            } else {
+            }
+            else
+            {
                 return (0);
             }
         }
