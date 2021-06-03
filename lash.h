@@ -13,6 +13,7 @@ std::string &trim(std::string &s, const char *t = " ");
 
 char **parse_input(char *input, int *index, char *separator = " ");
 
+std::string subshell(std::string input);
 int execute(char *input);
 void handleLogic(char *input);
 int main();

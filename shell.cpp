@@ -8,14 +8,15 @@ int main()
 
     while (!cin.eof())
     {
-
         cout << "$ ";
         getline(cin, input);
+
+        input = subshell(input);
+
         char *conversion = (char *)malloc(input.length() + 1);
         strcpy(conversion, input.c_str());
 
         int separateCmd = 0;
-
         char **seperateCommands = parse_input(conversion, &separateCmd, ";");
 
         for (int i = 0; i < separateCmd; i++)
@@ -25,6 +26,44 @@ int main()
         // cout << "length: " << length << endl;
     }
     return 0;
+}
+
+string subshell(string input)
+{
+
+    // Handle Subshell Parsing
+    if (input.find("(") != -1)
+    {
+        string temp = input.substr(input.find('(') + 1);
+        temp = temp.substr(0, temp.find(')'));
+        subshell(temp);
+        temp = input.substr(0, input.find('('));
+        input = input.substr(input.find(')') + 1);
+        input = temp + input;
+    }
+
+    // cout << "SUBSHELL" << endl;
+    int pid;
+    int status;
+    if ((pid = fork()) == 0)
+    {
+        char *conversion = (char *)malloc(input.length() + 1);
+        strcpy(conversion, input.c_str());
+
+        int separateCmd = 0;
+        char **seperateCommands = parse_input(conversion, &separateCmd, ";");
+
+        for (int i = 0; i < separateCmd; i++)
+        {
+            handleLogic(seperateCommands[i]);
+        }
+        exit(0);
+    }
+    else
+    {
+        wait(&status); // Blocking Wait
+    }
+    return input;
 }
 
 int execute(char *input)
