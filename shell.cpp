@@ -10,6 +10,16 @@ int main()
     {
         cout << "$ ";
         getline(cin, input);
+        while(input.back() == '\\') {
+            
+            string newline;
+            cout << "> ";
+            getline(cin,newline);
+            input.pop_back();
+            // cout << input << endl;
+            input = input + newline;
+        }
+        // cout << input << end;
 
         input = subshell(input);
 

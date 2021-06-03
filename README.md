@@ -13,3 +13,4 @@
 - `exec` Builtin
 - Subshell Processing 
 - Proper Exit Status and `!` implementation
+- Multiline inputs
